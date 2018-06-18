@@ -1,0 +1,21 @@
+out.println("<html>  <head> <body bgcolor=\"#008000\"> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"> <title>Chat Room</title>  </head>");
+         out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"> <center>");
+         out.println("<h2>Hi ");
+         out.println(user);
+         out.println("<br> Welcome to ChatBOT ");
+         out.println("</h2><br><hr>");
+         out.println("  <body>");
+         out.println("      <form name=\"chatWindow\" action=\"chatWindow\">");
+         out.println("Message: <input type=\"text\" name=\"txtMsg\" value=\"\" /><input type=\"submit\" value=\"Send\" name=\"cmdSend\"/>");
+         out.println("<br><br> <a href=\"chatWindow\">Refresh Chat Room</a>");
+         out.println("<br>  <br>");
+         out.println("Messages in Chat Box:   number of people online:");
+         out.println("<br><br>");
+         out.println("<textarea  readonly=\"readonly\"   name=\"txtMessage\" rows=\"20\" cols=\"60\">");
+         out.println("</textarea>");
+		        out.println("<br><br>");
+		       out.println(" <a href=\"index.html\" class=\"txt2\">");
+				out.println("logout");
+			out.println("</a>");
+		         out.println("</form>");
+				
