@@ -1,0 +1,126 @@
+package com.chatWindow;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+@WebServlet("/chatWindow")
+public class chatWindow extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public chatWindow() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int y=0;
+		Object user = request.getSession().getAttribute("uname");
+		Object mId =request.getSession().getAttribute("mId");
+		
+		
+		int M_id=0,on=0;
+		String text;
+		
+			text= request.getParameter("txtMsg");
+		
+		response.setContentType("text/html;charset=UTF-8");
+		try (PrintWriter out = response.getWriter()){
+		 out.println("<html>  <head> <body bgcolor=\"#99b3ff\"> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"> <title>Chat Room</title>  </head>");
+         out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"> <center>");
+         out.println("<h2>Hi ");
+         out.println(user);
+         out.println("<br> Welcome to ChatBOT ");
+         out.println("</h2><br><hr>");
+         out.println("  <body>");
+         out.println("      <form name=\"chatWindow\" action=\"chatWindow\">");
+         out.println("Message: <input type=\"text\" name=\"txtMsg\" value=\"\" /><input type=\"submit\" value=\"Send\" name=\"cmdSend\"/>");
+         out.println("<br><br> <a href=\"chatWindow\">Refresh Chat Room</a>");
+         out.println("<br>  <br>");
+         out.println("Messages in Chat Box ,    no. of people online:");
+         try {
+        	 Class.forName("oracle.jdbc.driver.OracleDriver");
+ 			Connection con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "swaraj123");
+ 			Statement st=con.createStatement();
+ 			String sql="select count(*) from log where status=1   ";
+ 			ResultSet rs=st.executeQuery(sql);
+ 			rs.next();
+ 			on= rs.getInt(1);
+ 			con.close();
+ 			
+         }
+         catch(Exception e) {
+        	 System.out.print(e);
+         }
+         out.print(String.valueOf(on));
+         out.println("<br><br>");
+         out.println("<textarea  readonly=\"readonly\"   name=\"txtMessage\" rows=\"20\" cols=\"60\">");
+       
+         try {
+    	   Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "swaraj123");
+			Statement st=con.createStatement();
+		    String sql="select * from messgs where u_id >="+String.valueOf(mId);
+		    ResultSet ps=st.executeQuery(sql);
+			while(ps.next()) {
+			 out.println(ps.getString(2)+": "+ps.getString(3));
+			 M_id=ps.getInt(1);
+			}
+			if (null == text || "".equalsIgnoreCase(text)) {
+				 System.out.println("null condition");
+			}
+			else {
+				M_id=M_id+1;
+				System.out.println("current id:"+M_id+"  entered id:"+mId);
+				sql="insert into messgs values("+String.valueOf(M_id)+",'"+String.valueOf(user)+"','"+text +"')";
+				ps=st.executeQuery(sql);
+			}
+			
+			System.out.println(text);
+			
+			  out.println("</textarea>");
+		         out.println("</form>");
+		         out.println("<br><br>");
+		         out.println("<form action= \"logout\"> ");
+					out.println("<input type=\"submit\" value=\"logout\">");
+				out.println("</form>");
+		         out.println("<hr>");
+		         out.println("</form>");
+		         out.println("</body>");
+		         out.println("</html>");
+		       
+       }
+         catch(Exception e) {
+        	 System.out.println(e);
+         }
+       
+		} 
+		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}
