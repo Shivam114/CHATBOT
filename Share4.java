@@ -20,7 +20,7 @@ import java.util.*;
 			Statement st=con.createStatement();
 			Scanner sc=new Scanner(System.in);
 			int days,t=0,t1=0,sum=0,a,b,c,n,sect,inv,time,c5=0,pos=0,count=0,divrate;
-			String s,s1;
+			String s,s1,s8;
 			double gr=0;
 			String name[]=new String[100];
 			float grr4[]=new float[100];
@@ -44,7 +44,9 @@ import java.util.*;
 			int nw[]=new int[100];
 			int inv1[]=new int[100];
 			float gr3[]=new float[100];
+			String domain[]=new String[100];
 			float avg;
+			String demand1[]=new String[100];
 			int rating[]=new int[100];
 			String gr2[]=new String[100];
 			while(t<n)	
@@ -65,9 +67,9 @@ import java.util.*;
 				inv=sc.nextInt();
 				System.out.println("Expected time period for return in months");
 				time=sc.nextInt();
-				String sql2="Insert into MyProjects2 values("+String.valueOf(t+1)+",'"+s+"','"+s1+"',"+String.valueOf(a)+","+String.valueOf(b)+","+String.valueOf(c)+","+String.valueOf(inv)+")";
+				String sql2="Insert into MyProjects3 values("+String.valueOf(t+1)+",'"+s+"','"+s1+"',"+String.valueOf(a)+","+String.valueOf(b)+","+String.valueOf(divrate)+","+String.valueOf(inv)+")";
 				ResultSet rs2=st.executeQuery(sql2);
-				System.out.println("INDEX     NAME         DOMAIN_NAME         SharePrice      No. of Shares   Rate of dividend   NETWORTH     Investment");
+				System.out.println("INDEX     NAME         DOMAIN_NAME         SharePrice      No. of Shares   Rate of dividend    Investment");
 				index[t]=t+1;
 				s2[t]=s;
 				s3[t]=s1;
@@ -77,12 +79,13 @@ import java.util.*;
 				nw[t]=c;
 				inv1[t]=inv;
 				int kl=0,c4=0,sum1=0;
-				String sql="Select * from MyProjects2";  
+				String sql="Select * from MyProjects3";  
 				ResultSet rs=st.executeQuery(sql);  
 				while(rs.next())
 			{
-				System.out.println(rs.getInt(1)+"            "+rs.getString(2)+"          "+rs.getString(3)+"          "+rs.getInt(4)+"     "+rs.getInt(5)+"     "+rs.getInt(6)+"   "+rs.getInt(7)+"     "+rs.getInt(8));	
+				System.out.println(rs.getInt(1)+"            "+rs.getString(2)+"          "+rs.getString(3)+"          "+rs.getInt(4)+"     "+rs.getInt(5)+"     "+rs.getInt(6)+"   "+rs.getInt(7));	
 				name[t1]=rs.getString(2);
+				domain[t1]=rs.getString(3);
 				t1++;
 			}
 				System.out.println("The Investment of "+(t+1)+"th Comapny is "+inv1[t]);
@@ -125,27 +128,36 @@ import java.util.*;
 				String ss2=String.format("%.2f",gr1);
 				String ss1=String.format("%.2f",ra1);
 				System.out.println("Enter the demand of the product (More/Less)");
-				demand=sc.next();
+				demand1[t]=sc.next();
+				demand=demand1[t];
 				System.out.println("Enter the ratings of the product out of 5");
 				rating[t]=sc.nextInt();
-				System.out.println("Profit of "+(t+1)+"th company is Rs "+diff+" and growth rate is "+ss+" rate of return is "+ss1);
+				int r=rating[t];
+				System.out.println("Profit of "+(t+1)+"th company is Rs "+diff+" and growth rate is "+ss);
 				float pri=(1+avg);
 				double acc=sum1-inv1[t];
-				double div=acc/c3;
+				double div=(double)acc/c3;
+				System.out.println(div);
 				String returnrate=String.format("%.3f", div);
 				System.out.println(sum1+" "+returnrate);
 				double div1=no[t]*share[t]*ratediv[t]*0.01;
-				int finalPrice=(int)(div1/(ra1-avg));
-				System.out.println("Price is "+finalPrice);
-				String sql4="Insert into Gain81 values("+String.valueOf(t)+","+String.valueOf(diff)+",'"+ss+"','"+ss1+"',"+String.valueOf(finalPrice)+",'"+demand+"',"+String.valueOf(rating[t])+")";
+				double sum2=sum1+div1;
+				int finalPrice=(int)Math.abs(sum2/(ra1-avg));
+				double shares=(double)finalPrice/no[t];
+				if(shares<0)
+				{
+					shares=-shares;
+				}
+				String ss22=String.format("%.3f",shares);
+				String sql4="Insert into Gains21 values("+String.valueOf(t+1)+","+String.valueOf(diff)+",'"+ss+"','"+ss22+"','"+demand+"',"+String.valueOf(r)+")";
 				ResultSet rs5=st.executeQuery(sql4);
-				System.out.println("Index     Profit   GrowthRate    RateofReturn      Price     Demand     Order");
-				String sql3="Select * from Gain81";
+				System.out.println("Index     Profit   GrowthRate    SharePrice     Demand     Order");
+				String sql3="Select * from Gains21";
 				ResultSet rs6=st.executeQuery(sql3);
 				String s23;
 				while(rs6.next())
 				{
-					System.out.println(rs6.getInt(1)+"             "+rs6.getInt(2)+"     "+rs6.getString(3)+"      "+rs6.getString(4)+"    "+rs6.getInt(5)+"    "+rs6.getString(6)+"    "+rs6.getInt(7));
+					System.out.println(rs6.getInt(1)+"        "+rs6.getInt(2)+"     "+rs6.getString(3)+"      "+rs6.getString(4)+"    "+rs6.getString(5)+"     "+rs6.getInt(6));
 					s23=rs6.getString(4);
 					gr5=Float.parseFloat(s23);
 					grr4[t]=gr5;
@@ -161,13 +173,13 @@ import java.util.*;
 				}
 			for(int j1=0;j1<t;j1++)
 			{
-				if((grr4[j1]>max)&&(rating[j1]>=4))
+				if((grr4[j1]>max)&&(rating[j1]>=4)&&(demand1[j1]=="More"))
 				{
 					max=grr4[j1];
 					pos=j1;
 				}
 			}
-			System.out.println(name[pos]);
+			System.out.println(name[pos]+" with domain name "+domain[pos]);
 			}catch(Exception e)
 			{
 				System.out.println(e);
