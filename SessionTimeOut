@@ -1,0 +1,24 @@
+public class MyHttpSessionListener implements HttpSessionListener{
+  public void sessionCreated(HttpSessionEvent event){
+    event.getSession().setMaxInactiveInterval(15*60); //in seconds
+  }
+  public void sessionDestroyed(HttpSessionEvent event){}
+}
+
+//And don't forget to define the listener in the deployment descriptor://
+
+<webapp>
+...
+  <listeners>
+    <listener-class>com.example.MyHttpSessionListener</listener-class>
+  </listeners>
+</webapp>
+
+//Still, I would recommend creating different web.xml files for each application and defining the session timeout there://
+
+<webapp>
+...
+  <session-config>
+    <session-timeout>15</session-timeout> <!-- in minutes -->
+  </session-config>
+</webapp>
